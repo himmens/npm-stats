@@ -1,0 +1,17 @@
+{
+  "extends": [
+    "airbnb"
+  ],
+  "rules": {
+    "react/jsx-filename-extension": [1, {"extensions": [".js", ".jsx"]}],
+    "eol-last": 0,
+    "object-curly-spacing": [0, "never"]
+  },
+  "globals": {
+    "window": true,
+    "document": true,
+    "fetch": false,
+    "it": false,
+    "expect": false
+  }
+}
