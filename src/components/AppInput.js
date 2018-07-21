@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 
 const styles = theme => ({
@@ -9,56 +9,29 @@ const styles = theme => ({
   },
 });
 
-class AppInput extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {value: ''};
-    this.input = React.createRef();
-    this.onChange = this.onChange.bind(this);
-    this.onKeyDown = this.onKeyDown.bind(this);
-  }
-
-  onChange(event) {
-    const {value} = event.target;
-    this.setState({value});
-  }
-
-  onKeyDown(event) {
-    const {onConfirm, onCancel} = this.props;
-    const {value} = this.state;
-
-    if (event.keyCode === 13) { // ENTER
-      onConfirm(value);
-    } else if (event.keyCode === 27) { // ESC
-      this.setState({value: ''});
-      onCancel();
-    }
-  }
-
-  render() {
-    const {classes, placeholder} = this.props;
-    const {value} = this.state;
-    return (
-      <Input
-        ref={this.input}
-        className={classes.input}
-        placeholder={placeholder}
-        value={value}
-        onChange={this.onChange}
-        onKeyDown={this.onKeyDown}
-        inputProps={{
-          'aria-label': 'Description',
-        }}
-      />
-    );
-  }
+function AppInput(props) {
+  const {classes, placeholder, onChange} = props;
+  return (
+    <Input
+      className={classes.input}
+      placeholder={placeholder}
+      onChange={onChange}
+      inputProps={{
+        'aria-label': 'Description',
+      }}
+    />
+  );
 }
+
+AppInput.defaultProps = {
+  placeholder: "",
+  onChange: undefined,
+};
 
 AppInput.propTypes = {
   classes: PropTypes.objectOf(PropTypes.string).isRequired,
-  placeholder: PropTypes.string.isRequired,
-  onConfirm: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired,
+  placeholder: PropTypes.string,
+  onChange: PropTypes.func,
 };
 
 export default withStyles(styles)(AppInput);
