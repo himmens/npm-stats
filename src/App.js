@@ -35,7 +35,7 @@ class App extends React.Component {
     const {packageId, dateFrom, dateTo} = this.state;
     if (packageId) {
       const {dispatch} = this.props;
-      dispatch(getDownloadsRanges(packageId, dateFrom, dateTo));
+      dispatch(getDownloadsRanges(packageId.split(' ').join(''), dateFrom, dateTo));
     }
   }
 
@@ -48,9 +48,20 @@ class App extends React.Component {
     const {downloads} = this.props;
     const {packageId, dateFrom, dateTo} = this.state;
     const disabled = !packageId;
-    const sortedData = downloads.sort(function(a, b) {
-      return a.date - b.date;
-    });
+
+    const packages = downloads ? Object.keys(downloads) : [];
+    const mergedData = [];
+    for (let p of packages) {
+      const arr = downloads[p];
+      for (let i = 0; i < arr.length; i++) {
+        if (!mergedData[i])
+          mergedData[i] = {date: arr[i].date, [p]: arr[i].value};
+        else
+          mergedData[i][p] = arr[i].value;
+      }
+    }
+
+    const colors = ["#8884d8", "#82ca9d"];
 
     return (
       <div className="rootDiv">
@@ -60,18 +71,18 @@ class App extends React.Component {
         <AppDateInput label="To" defaultValue={dateTo} onChange={this.onDateToChange}/>
         <AppButton label="Show" onClick={this.onButtonShow} disabled={disabled} />
 
-        <LineChart width={500} height={300} data={sortedData}>
+        <LineChart width={500} height={300} data={mergedData}>
           <XAxis
             dataKey="date"
             type="number"
             domain={['dataMin', 'dataMax']}
             tickFormatter = {this.formatXAxis}
           />
-          <YAxis dataKey="value"/>
+          <YAxis />
           <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
           <Tooltip labelFormatter={this.formatXAxis}/>
           <Legend />
-          <Line type="monotone" dataKey="value" name={packageId} stroke="#82ca9d" />
+          {packages.map((key, index) => <Line key={key} type="monotone" dataKey={key} name={key} stroke={colors[index]} />)}
         </LineChart>
       </div>
     );
@@ -80,12 +91,12 @@ class App extends React.Component {
 
 App.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  downloads: PropTypes.arrayOf(PropTypes.object).isRequired,
+  downloads: PropTypes.objectOf(PropTypes.array).isRequired,
 };
 
 function mapStateToProps(state) {
   return {
-    downloads: getDownloadsData(state),
+    downloads: state.downloads,
   };
 }
 
