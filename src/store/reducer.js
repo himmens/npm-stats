@@ -12,7 +12,14 @@ const initialState = Immutable({
 });
 
 const parseDownloads = data => data.reduce((res, value) => {
-  res[value.day] = value.downloads;
+  if (value.day) {
+    const arr = value.day.split('-'); //2018-06-21
+    const year = parseInt(arr[0], 10);
+    const month = parseInt(arr[1], 10) - 1;
+    const day = parseInt(arr[2], 10);
+    const date = new Date(year, month, day);
+    res[date.getTime()] = value.downloads;
+  }
   return res;
 }, {});
 
@@ -27,13 +34,19 @@ export default function reduce(state = initialState, action = {}) {
       });
 
     case DOWNLOADS_RECEIVED:
-      const {downloads} = action.data;
-      return state.merge({
-        isFetching: false,
-        downloads: {
-          [packageId]: parseDownloads(downloads),
-        },
-      });
+      if (action.data) {
+        const {downloads} = action.data;
+        return state.merge({
+          isFetching: false,
+          downloads: {
+            [packageId]: parseDownloads(downloads),
+          },
+        });
+      } else {
+        return state.merge({
+          isFetching: false,
+        });
+      }
 
     default:
       return state;
@@ -50,7 +63,7 @@ export default function reduce(state = initialState, action = {}) {
 export function getDownloadsData(state) {
   const {currentPackage, downloads} = state;
   if (currentPackage && downloads[currentPackage]) {
-    const data = _.map(downloads[currentPackage], (value, key, collection) => ({date: key, downloads: collection[key]}));
+    const data = _.map(downloads[currentPackage], (value, key, collection) => ({date: parseInt(key, 10), value: collection[key]}));
     return data;
   }
   return [];
