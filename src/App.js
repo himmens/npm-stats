@@ -6,35 +6,35 @@ import AppDateInput from './components/AppDateInput';
 import AppButton from './components/AppButton';
 import ChipInput from 'material-ui-chip-input'
 import {getDownloadsRanges} from './store/actions';
-import Immutable from 'seamless-immutable';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = Immutable({packages: ["react", "angular", "vue"], dateFrom: "2018-06-01", dateTo: "2018-07-01"});
+    this.packages = ["react", "angular", "vue"];
+    this.dateFrom = "2018-06-01";
+    this.dateTo = "2018-07-01";
     this.onChipInputChange = this.onChipInputChange.bind(this);
     this.onDateFromChange = this.onDateFromChange.bind(this);
     this.onDateToChange = this.onDateToChange.bind(this);
     this.onButtonShow = this.onButtonShow.bind(this);
   }
 
-  onChipInputChange(chips) {
-    this.setState(Immutable(this.state).merge({packages: chips}));
+  onChipInputChange(data) {
+    this.packages = data;
   }
 
   onDateFromChange(event) {
-    this.setState(Immutable(this.state).merge({dateFrom: event.target.value}));
+    this.dateFrom = event.target.value;
   }
 
   onDateToChange(event) {
-    this.setState(Immutable(this.state).merge({dateTo: event.target.value}));
+    this.dateTo = event.target.value;
   }
 
   onButtonShow() {
-    const {packages, dateFrom, dateTo} = this.state;
-    if (packages.length > 0) {
+    if (this.packages.length > 0) {
       const {dispatch} = this.props;
-      dispatch(getDownloadsRanges(packages, dateFrom, dateTo));
+      dispatch(getDownloadsRanges(this.packages, this.dateFrom, this.dateTo));
     }
   }
 
@@ -45,8 +45,10 @@ class App extends React.Component {
 
   render() {
     const {downloads} = this.props;
-    const {packages, dateFrom, dateTo} = this.state;
-    const disabled = packages.length === 0;
+    const packages = this.packages;
+    const dateFrom =  this.dateFrom;
+    const dateTo =  this.dateTo;
+    const colors = ["#8884d8", "#82ca9d", "#11ca9d", "#62119d"];
 
     const packagesDownloads = downloads ? Object.keys(downloads) : [];
     const mergedData = [];
@@ -60,15 +62,13 @@ class App extends React.Component {
       }
     }
 
-    const colors = ["#8884d8", "#82ca9d", "#11ca9d", "#62119d"];
-
     return (
       <div className="rootDiv">
         <h2>Download statistics for npm package</h2>
         <ChipInput defaultValue={packages} onChange={this.onChipInputChange} />
         <AppDateInput label="From" defaultValue={dateFrom} onChange={this.onDateFromChange}/>
         <AppDateInput label="To" defaultValue={dateTo} onChange={this.onDateToChange}/>
-        <AppButton label="Show" onClick={this.onButtonShow} disabled={disabled} />
+        <AppButton label="Apply" onClick={this.onButtonShow} />
 
         <LineChart width={500} height={300} data={mergedData}>
           <XAxis
