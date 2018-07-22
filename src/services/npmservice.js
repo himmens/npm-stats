@@ -8,10 +8,10 @@ const ENDPOINT = 'https://api.npmjs.org/downloads/range';
 const DEFAULT_PERIOD = 'last-month';
 
 class NPMService {
-  async getDownloadsRanges(packageId, dateFrom = null, dateTo = null) {
+  async getDownloadsRanges(packages, dateFrom = null, dateTo = null) {
     try {
       const period = (dateFrom && dateTo) ? `${dateFrom}:${dateTo}` : DEFAULT_PERIOD;
-      const url = `${ENDPOINT}/${period}/${packageId}`;
+      const url = `${ENDPOINT}/${period}/${packages.join(',')}`;
       console.log('NPMService.fetch', url);
       const response = await fetch(url, {
         method: 'GET',

@@ -7,7 +7,7 @@ import { DOWNLOADS_RECEIVED, DOWNLOADS_REQUESTED } from './actions';
 const initialState = Immutable({
   isFetching: false,
   downloads: {},
-  currentPackage: undefined,
+  packages: [],
 });
 
 const parseData = data => {
@@ -36,13 +36,13 @@ const parseDownloads = data => {
 };
 
 export default function reduce(state = initialState, action = {}) {
-  const {packageId, data} = action;
+  const {packages, data} = action;
 
   switch (action.type) {
     case DOWNLOADS_REQUESTED:
       return state.merge({
         isFetching: true,
-        currentPackage: packageId,
+        packages,
       });
 
     case DOWNLOADS_RECEIVED:

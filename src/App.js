@@ -2,25 +2,24 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import { LineChart, XAxis, YAxis, Tooltip, Legend, CartesianGrid, Line } from 'recharts';
-import AppInput from './components/AppInput';
 import AppDateInput from './components/AppDateInput';
 import AppButton from './components/AppButton';
-import {getDownloadsData} from './store/reducer';
+import ChipInput from 'material-ui-chip-input'
 import {getDownloadsRanges} from './store/actions';
 import Immutable from 'seamless-immutable';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = Immutable({packageId: "", dateFrom: "2018-06-01", dateTo: "2018-07-01"});
-    this.onInputChange = this.onInputChange.bind(this);
+    this.state = Immutable({packages: ["react", "angular", "vue"], dateFrom: "2018-06-01", dateTo: "2018-07-01"});
+    this.onChipInputChange = this.onChipInputChange.bind(this);
     this.onDateFromChange = this.onDateFromChange.bind(this);
     this.onDateToChange = this.onDateToChange.bind(this);
     this.onButtonShow = this.onButtonShow.bind(this);
   }
 
-  onInputChange(event) {
-    this.setState(Immutable(this.state).merge({packageId: event.target.value}));
+  onChipInputChange(chips) {
+    this.setState(Immutable(this.state).merge({packages: chips}));
   }
 
   onDateFromChange(event) {
@@ -32,10 +31,10 @@ class App extends React.Component {
   }
 
   onButtonShow() {
-    const {packageId, dateFrom, dateTo} = this.state;
-    if (packageId) {
+    const {packages, dateFrom, dateTo} = this.state;
+    if (packages.length > 0) {
       const {dispatch} = this.props;
-      dispatch(getDownloadsRanges(packageId.split(' ').join(''), dateFrom, dateTo));
+      dispatch(getDownloadsRanges(packages, dateFrom, dateTo));
     }
   }
 
@@ -46,12 +45,12 @@ class App extends React.Component {
 
   render() {
     const {downloads} = this.props;
-    const {packageId, dateFrom, dateTo} = this.state;
-    const disabled = !packageId;
+    const {packages, dateFrom, dateTo} = this.state;
+    const disabled = packages.length === 0;
 
-    const packages = downloads ? Object.keys(downloads) : [];
+    const packagesDownloads = downloads ? Object.keys(downloads) : [];
     const mergedData = [];
-    for (let p of packages) {
+    for (let p of packagesDownloads) {
       const arr = downloads[p];
       for (let i = 0; i < arr.length; i++) {
         if (!mergedData[i])
@@ -61,12 +60,12 @@ class App extends React.Component {
       }
     }
 
-    const colors = ["#8884d8", "#82ca9d"];
+    const colors = ["#8884d8", "#82ca9d", "#11ca9d", "#62119d"];
 
     return (
       <div className="rootDiv">
         <h2>Download statistics for npm package</h2>
-        <AppInput placeholder="Enter npm package" onChange={this.onInputChange} />
+        <ChipInput defaultValue={packages} onChange={this.onChipInputChange} />
         <AppDateInput label="From" defaultValue={dateFrom} onChange={this.onDateFromChange}/>
         <AppDateInput label="To" defaultValue={dateTo} onChange={this.onDateToChange}/>
         <AppButton label="Show" onClick={this.onButtonShow} disabled={disabled} />

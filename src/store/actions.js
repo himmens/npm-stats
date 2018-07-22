@@ -20,15 +20,15 @@ export const downloadsRangesReceived = (packageId, data) => ({
 /**
  * Async get downloads ranges by package.
  */
-export const getDownloadsRanges = (packageId, dateFrom = null, dateTo = null) => async (dispatch, getState) => {
+export const getDownloadsRanges = (packages, dateFrom = null, dateTo = null) => async (dispatch, getState) => {
   const state = getState();
   if (!state.isFetching) {
     // dispatch fetching is started
-    dispatch(downloadsRangesRequested(packageId));
+    dispatch(downloadsRangesRequested(packages));
     // fetch data from npmService
-    const data = await npmService.getDownloadsRanges(packageId, dateFrom, dateTo);
+    const data = await npmService.getDownloadsRanges(packages, dateFrom, dateTo);
     // dispatch fetching action is complete
-    dispatch(downloadsRangesReceived(packageId, data));
+    dispatch(downloadsRangesReceived(packages, data));
     return data;
   }
   return Promise.resolve();
