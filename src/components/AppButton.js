@@ -21,7 +21,7 @@ function AppButton(props) {
 AppButton.propTypes = {
   classes: PropTypes.objectOf(PropTypes.string).isRequired,
   label: PropTypes.string.isRequired,
-  disabled: PropTypes.bool.isRequired,
+  disabled: PropTypes.bool,
   onClick: PropTypes.func.isRequired,
 };
 

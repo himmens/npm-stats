@@ -64,8 +64,8 @@ class App extends React.Component {
 
     return (
       <div className="rootDiv">
-        <h2>Download statistics for npm package</h2>
-        <ChipInput defaultValue={packages} onChange={this.onChipInputChange} />
+        <h3 className="title">Chose several npm packages below and press 'APPLY' button to show download statistics</h3>
+        <ChipInput className="chipInput" defaultValue={packages} onChange={this.onChipInputChange} />
         <AppDateInput label="From" defaultValue={dateFrom} onChange={this.onDateFromChange}/>
         <AppDateInput label="To" defaultValue={dateTo} onChange={this.onDateToChange}/>
         <AppButton label="Apply" onClick={this.onButtonShow} />
