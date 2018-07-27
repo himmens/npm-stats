@@ -1,18 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
-import { LineChart, XAxis, YAxis, Tooltip, Legend, CartesianGrid, Line } from 'recharts';
+import { connect } from 'react-redux';
+import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
+import ChipInput from 'material-ui-chip-input';
 import AppDateInput from './components/AppDateInput';
 import AppButton from './components/AppButton';
-import ChipInput from 'material-ui-chip-input'
-import {getDownloadsRanges} from './store/actions';
+import { getDownloadsRanges } from './store/actions';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.packages = ["react", "angular", "vue"];
-    this.dateFrom = "2018-06-01";
-    this.dateTo = "2018-07-01";
+    this.packages = ['react', 'angular', 'vue'];
+    this.dateFrom = '2018-06-01';
+    this.dateTo = '2018-07-01';
     this.onChipInputChange = this.onChipInputChange.bind(this);
     this.onDateFromChange = this.onDateFromChange.bind(this);
     this.onDateToChange = this.onDateToChange.bind(this);
@@ -45,29 +45,41 @@ class App extends React.Component {
 
   render() {
     const {downloads} = this.props;
-    const packages = this.packages;
-    const dateFrom =  this.dateFrom;
-    const dateTo =  this.dateTo;
-    const colors = ["#8884d8", "#82ca9d", "#11ca9d", "#62119d"];
+    const colors = ['#8884d8', '#82ca9d', '#11ca9d', '#62119d'];
 
     const packagesDownloads = downloads ? Object.keys(downloads) : [];
     const mergedData = [];
-    for (let p of packagesDownloads) {
+    for (const p of packagesDownloads) {
       const arr = downloads[p];
       for (let i = 0; i < arr.length; i++) {
-        if (!mergedData[i])
+        if (!mergedData[i]) {
           mergedData[i] = {date: arr[i].date, [p]: arr[i].value};
-        else
+        } else {
           mergedData[i][p] = arr[i].value;
+        }
       }
     }
 
     return (
       <div className="rootDiv">
-        <h3 className="title">Chose several npm packages below and press 'APPLY' button to show download statistics</h3>
-        <ChipInput className="chipInput" defaultValue={packages} onChange={this.onChipInputChange} />
-        <AppDateInput label="From" defaultValue={dateFrom} onChange={this.onDateFromChange}/>
-        <AppDateInput label="To" defaultValue={dateTo} onChange={this.onDateToChange}/>
+        <h3 className="title">
+          Choose several npm packages below and press APPLY button to see download statistics
+        </h3>
+        <ChipInput
+          className="chipInput"
+          defaultValue={this.packages}
+          onChange={this.onChipInputChange}
+        />
+        <AppDateInput
+          label="From"
+          defaultValue={this.dateFrom}
+          onChange={this.onDateFromChange}
+        />
+        <AppDateInput
+          label="To"
+          defaultValue={this.dateTo}
+          onChange={this.onDateToChange}
+        />
         <AppButton label="Apply" onClick={this.onButtonShow} />
 
         <LineChart width={500} height={300} data={mergedData}>
@@ -75,13 +87,21 @@ class App extends React.Component {
             dataKey="date"
             type="number"
             domain={['dataMin', 'dataMax']}
-            tickFormatter = {this.formatXAxis}
+            tickFormatter={this.formatXAxis}
           />
           <YAxis />
-          <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
-          <Tooltip labelFormatter={this.formatXAxis}/>
+          <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+          <Tooltip labelFormatter={this.formatXAxis} />
           <Legend />
-          {packages.map((key, index) => <Line key={key} type="monotone" dataKey={key} name={key} stroke={colors[index]} />)}
+          {this.packages.map((key, index) => (
+            <Line
+              key={key}
+              type="monotone"
+              dataKey={key}
+              name={key}
+              stroke={colors[index]}
+            />
+          ))}
         </LineChart>
       </div>
     );

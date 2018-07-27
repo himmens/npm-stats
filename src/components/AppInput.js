@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {withStyles} from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
+import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   input: {
@@ -16,15 +16,13 @@ function AppInput(props) {
       className={classes.input}
       placeholder={placeholder}
       onChange={onChange}
-      inputProps={{
-        'aria-label': 'Description',
-      }}
+      inputProps={{'aria-label': 'Description'}}
     />
   );
 }
 
 AppInput.defaultProps = {
-  placeholder: "",
+  placeholder: '',
   onChange: undefined,
 };
 

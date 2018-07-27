@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {withStyles} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
+import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   container: {
@@ -16,7 +16,9 @@ const styles = theme => ({
 });
 
 function AppDateInput(props) {
-  const {classes, label, defaultValue, onChange} = props;
+  const {
+    classes, label, defaultValue, onChange,
+  } = props;
   return (
     <form className={classes.container} noValidate>
       <TextField
